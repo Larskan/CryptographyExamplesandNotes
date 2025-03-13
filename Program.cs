@@ -2,6 +2,7 @@
 using System.Text;
 using System;
 using Isopoh.Cryptography.Argon2;
+using NSec.Cryptography;
 
 class Program
 {
@@ -36,24 +37,28 @@ class Program
     //{
     //    using (var aes = new AesGcm(GenerateKey()))
     //    {
+    //        // IV: Initialization Vector, a random value that is so the same plaintext will encrypt to a different ciphertext.
     //        byte[] iv = GenerateIV();
-    //        byte[] plaintext = Encoding.UTF8.GetBytes("Hello World!");
+    //        // Plaintext: Original message that will be encrypted.
+    //        byte[] plaintext = Encoding.UTF8.GetBytes("Durial123 was a Legendary Player");
+    //        // Ciphertext: Encrypted message that will be decrypted.
     //        byte[] ciphertext = new byte[plaintext.Length];
-    //        byte[] tag = new byte[16]; 
+    //        // Tag: Authentication tag that is used to verify the integrity of the message.
+    //        byte[] tag = new byte[16];
 
+    //        // Encrypt the plaintext message.
     //        aes.Encrypt(iv, plaintext, ciphertext, tag);
     //        Console.WriteLine($"Encrypted: {Convert.ToBase64String(ciphertext)}");
-    //        //Encrypted: dd/6+0VJggBqDsUx
-
+    //        //Encrypted: Sggx6WyHuopR3hSBncIzvqkqxfoAK+JDkE/6zXPvOTo=
 
     //        byte[] decrypted = new byte[plaintext.Length];
     //        aes.Decrypt(iv, ciphertext, tag, decrypted);
     //        Console.WriteLine($"Decrypted: {Encoding.UTF8.GetString(decrypted)}");
-    //        //Decrypted: Hello World!
+    //        //Decrypted: Durial123 was a Legendary Player
     //    }
     //}
 
-    //private static byte[] GenerateKey() => RandomNumberGenerator.GetBytes(32); 
+    //private static byte[] GenerateKey() => RandomNumberGenerator.GetBytes(32);
     //private static byte[] GenerateIV() => RandomNumberGenerator.GetBytes(12);
     #endregion AES-256-GCM Encryption/Decryption
 
@@ -63,7 +68,7 @@ class Program
     /// </summary>
     //static void Main()
     //{
-    //    string message = "Hello World!";
+    //    string message = "Æbler er bedre end appelsiner";
     //    byte[] hash = SHA512.HashData(Encoding.UTF8.GetBytes(message));
     //    Console.WriteLine($"SHA512 Hash: {BitConverter.ToString(hash).Replace("-", "")}");
 
@@ -77,12 +82,12 @@ class Program
     //static void Main()
     //{
     //    byte[] key = RandomNumberGenerator.GetBytes(32);
-    //    string message = "Hello World!";
+    //    string message = "Kunne skrive Hello World, men det ville da være lidt kedeligt";
     //    using (var hmac = new HMACSHA256(key))
     //    {
     //        byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(message));
     //        Console.WriteLine($"HMAC-SHA256: {BitConverter.ToString(hash).Replace("-", "")}");
-    //    }   
+    //    }
     //}
     #endregion HMAC-SHA256
 
@@ -91,16 +96,18 @@ class Program
     /// Use Curve25519 to perform ECDH key exchange between two parties to compute the same shared secret.
     /// ECDH: Elliptic Curve Diffie-Hellman, a key exchange algorithm that allows two parties to securely compute a shared secret.
     /// Curve25519: An elliptic curve that is used in ECDH key exchange.
+    /// Steve and Bob each generate a private key and a public key.
+    /// Each person uses their private key and the other person's public key to compute the same shared secret key
     /// </summary>
     //static void Main()
     //{
-    //    using (var steve = ECDiffieHellman.Create(ECCurve.CreateFromFriendlyName("curve25519"))) 
+    //    using (var steve = ECDiffieHellman.Create(ECCurve.CreateFromFriendlyName("curve25519")))
     //    using (var bob = ECDiffieHellman.Create(ECCurve.CreateFromFriendlyName("curve25519")))
     //    {
     //        byte[] steveKey = steve.DeriveKeyMaterial(bob.PublicKey);
     //        byte[] bobKey = bob.DeriveKeyMaterial(steve.PublicKey);
     //        Console.WriteLine(Convert.ToBase64String(steveKey) == Convert.ToBase64String(bobKey) ? "Shared keys match!" : "Error");
-    //    } 
+    //    }
 
     //}
     #endregion Curve25519 ECDH Key Exchange
@@ -109,15 +116,24 @@ class Program
     /// <summary>
     /// Example of how to use ED25519 to sign a message and verify the signature.
     /// ED25519: Short for Edwards-curve Digital Signature Algorithm(EdDSA) with curve25519.
+    /// Library needed: NSec.Cryptography - dotnet add package NSec.Cryptography
     /// </summary>
     //static void Main()
     //{
-    //    using(var ed25519 = ECDsa.Create(ECCurve.CreateFromFriendlyName("ed25519")))
-    //    {
-    //        byte[] message = Encoding.UTF8.GetBytes("Sign me");
-    //        byte[] signature = ed25519.SignData(message, HashAlgorithmName.SHA512);
-    //        Console.WriteLine(Convert.ToBase64String(signature));
-    //    }
+    //    //ED25519 key pair
+    //    var algorithm = SignatureAlgorithm.Ed25519;
+    //    using var key = Key.Create(algorithm);
+
+    //    //Sign a message
+    //    byte[] message = Encoding.UTF8.GetBytes("You know you want to sign me..!");
+    //    //Sign the message
+    //    byte[] signature = algorithm.Sign(key, message);
+    //    Console.WriteLine($"Signature: {Convert.ToBase64String(signature)}");
+
+    //    //Verify the signature
+    //    bool isValid = algorithm.Verify(key.PublicKey, message, signature);
+    //    Console.WriteLine($"Signature is valid: {isValid}");
+
     //}
     #endregion ED25519 Digital Signature
 
@@ -129,14 +145,13 @@ class Program
     //{
     //    using (RSA rsa = RSA.Create(2048))
     //    {
-    //        byte[] data = Encoding.UTF8.GetBytes("Hello World!");
+    //        byte[] data = Encoding.UTF8.GetBytes("Man har en plan...til man laver en ny!");
     //        byte[] encrypted = rsa.Encrypt(data, RSAEncryptionPadding.OaepSHA256);
     //        Console.WriteLine($"Encrypted: {Convert.ToBase64String(encrypted)}");
 
     //        byte[] decrypted = rsa.Decrypt(encrypted, RSAEncryptionPadding.OaepSHA256);
     //        Console.WriteLine($"Decrypted: {Encoding.UTF8.GetString(decrypted)}");
     //    }
-
     //}
     #endregion RSA Encryption/Decryption
 
@@ -151,37 +166,25 @@ class Program
     static void Main()
     {
         string password = "securepassword";
-        string hashedPassword = HashPasswordArgon2id(password);
+        string hashedPassword = Argon2.Hash(password, type: Argon2Type.HybridAddressing);
         Console.WriteLine($"Hashed Password: {hashedPassword}");
-        //Hashed Password: $argon2id$v=19$m=65536,t=3,p=1$a8dFk75BRVCgUEYQYbGwuQ$KF+xIPxP1Y3JRKJ8zdvOwbl5/bI9F2Ntm8haj4zgI0Q
+        //Hashed Password: $argon2id$v=19$m=65536,t=3,p=1$LosKGmDJ7o+WXGdAgE9Maw$y9JnepM3DZgvchVBaV4TfHLKh/oltfw3bFDaQdZuo9Y
 
-        bool isMatch = VerifyPasswordArgon2id(password, hashedPassword);
-        Console.WriteLine($"Password Match: {isMatch}");
+        Console.WriteLine($"Password Match: {Argon2.Verify(hashedPassword, password)}");
         //Password Match: True
 
-        byte[] salt = GenerateSalt(16);
+        byte[] salt = GenerateSalt();
 
         int iterations = 600000;
         byte[] key = Rfc2898DeriveBytes.Pbkdf2(password, salt, iterations, HashAlgorithmName.SHA512, 32);
         Console.WriteLine($"Key: {BitConverter.ToString(key).Replace("-", "")}");
-        //Key: 8F7F42646CA93A0B673374A54980D99B9C54DFE2DC7421F7D59FC5DEC0E7B665
+        //Key: 78FE829ECC36E454E47E82C6E766298FF7350C003E4E007EBC8F4D4CED06F7C1
     }
-    static byte[] GenerateSalt(int size)
+    static byte[] GenerateSalt(int size = 16)
     {
         byte[] salt = new byte[size];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(salt);
-        }
+        RandomNumberGenerator.Fill(salt);
         return salt;
-    }
-    static string HashPasswordArgon2id(string password)
-    {
-        return Argon2.Hash(password, type: Argon2Type.HybridAddressing);
-    }
-    static bool VerifyPasswordArgon2id(string password, string hashPassword)
-    {
-        return Argon2.Verify(hashPassword, password);
     }
     #endregion PBKDF2-HMAC-SHA256 Key Derivation
 }
